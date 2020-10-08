@@ -1,6 +1,18 @@
-type Gravatar @entity {
+type Wallet @entity {
   id: ID!
-  owner: Bytes!
-  displayName: String!
-  imageUrl: String!
+  tokens: [TokenBalance!]! @derivedFrom(field: "wallet")
+}
+
+type Token @entity {
+  id: ID!
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+}
+
+type TokenBalance @entity {
+  id: ID!
+  balance: BigInt!
+  token: Token!
+  wallet: Wallet!
 }

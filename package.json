@@ -8,7 +8,8 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy chasepoirier/token-data --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy-local": "graph deploy chasepoirier/token-data --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "deploy-local": "graph deploy chasepoirier/token-data --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "asbuild": "yarn codegen"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.18.0",
