@@ -1,11 +1,11 @@
 /* eslint-disable prefer-const */
-import { BigInt, BigDecimal, Address } from "@graphprotocol/graph-ts";
+import { BigInt, BigDecimal, Address, Bytes } from "@graphprotocol/graph-ts";
 import { ERC20 } from "../generated/Block/ERC20";
 import { ERC20SymbolBytes } from "../generated/Block/ERC20SymbolBytes";
 import { ERC20NameBytes } from "../generated/Block/ERC20NameBytes";
 
 import { Factory as FactoryContract } from "../generated/templates/Token/Factory";
-import { Wallet } from "../generated/schema";
+import { Token, TokenBalance, Wallet } from "../generated/schema";
 
 export const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
 export const FACTORY_ADDRESS = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
@@ -135,18 +135,38 @@ export function createWallet(address: Address): void {
   let wallet = Wallet.load(address.toHexString());
   if (wallet === null) {
     wallet = new Wallet(address.toHexString());
-    wallet.tokens = [];
+
     wallet.save();
   }
 }
 
-export function addToken(walletAddress: Address, tokenAddress: string): void {
-  let wallet = Wallet.load(walletAddress.toHexString());
+export function fetchTokenBalance(
+  tokenAddress: Address,
+  wallet: Address
+): BigInt {
+  let contract = ERC20.bind(tokenAddress);
 
-  let idx = wallet.tokens.indexOf(tokenAddress);
-
-  if (idx === -1) {
-    wallet.tokens.push(tokenAddress);
-    wallet.save();
+  // try types string and bytes32 for name
+  let balanceValue = new BigInt(0);
+  let balanceResult = contract.try_balanceOf(wallet);
+  if (!balanceResult.reverted) {
+    balanceValue = balanceResult.value;
   }
+
+  return balanceValue;
+}
+
+export function addToken(walletAddress: Address, tokenAddress: string): void {
+  let token = TokenBalance.load(
+    `${walletAddress.toHexString()}-${tokenAddress}`
+  );
+
+  token.balance = fetchTokenBalance(
+    walletAddress,
+    Address.fromString(tokenAddress)
+  );
+  token.token = tokenAddress;
+  token.wallet = walletAddress.toHexString();
+
+  token.save();
 }
