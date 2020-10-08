@@ -157,13 +157,4 @@ export class TokenBalance extends Entity {
   set token(value: string) {
     this.set("token", Value.fromString(value));
   }
-
-  get wallet(): string {
-    let value = this.get("wallet");
-    return value.toString();
-  }
-
-  set wallet(value: string) {
-    this.set("wallet", Value.fromString(value));
-  }
 }

@@ -1,6 +1,6 @@
 type Wallet @entity {
   id: ID!
-  tokens: [TokenBalance!]! @derivedFrom(field: "wallet")
+  tokens: [TokenBalance!]!
 }
 
 type Token @entity {
@@ -14,5 +14,4 @@ type TokenBalance @entity {
   id: ID!
   balance: BigInt!
   token: Token!
-  wallet: Wallet!
 }

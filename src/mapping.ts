@@ -17,18 +17,15 @@ import {
 import { Transfer } from "../generated/Block/ERC20";
 
 export function handleTransfer(event: Transfer): void {
-  // log.info("CONTRACT_ADDRESS", [contractAddress]);
-
   let context = dataSource.context();
   let contractAddress = context.getString("contractAddress");
 
-  // log.info("RECEIVER", [event.params.to.toHexString()]);
+  log.info("RECEIVER", [event.params.to.toHexString()]);
+  log.info("CONTRACT_ADDRESS", [contractAddress]);
 
   createWallet(event.params.to);
 
   addToken(event.params.to, contractAddress);
-  // log.info("RECEIVER", [event.params.to.toHexString()]);
-  // log.info("CONTRACT_ADDRESS", [contractAddress.toHexString()]);
 }
 
 export function handleNewPair(event: PairCreated): void {
