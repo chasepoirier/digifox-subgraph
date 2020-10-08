@@ -1,5 +1,11 @@
 /* eslint-disable prefer-const */
-import { BigInt, BigDecimal, Address, Bytes } from "@graphprotocol/graph-ts";
+import {
+  BigInt,
+  BigDecimal,
+  Address,
+  Bytes,
+  log,
+} from "@graphprotocol/graph-ts";
 import { ERC20 } from "../generated/Block/ERC20";
 import { ERC20SymbolBytes } from "../generated/Block/ERC20SymbolBytes";
 import { ERC20NameBytes } from "../generated/Block/ERC20NameBytes";
@@ -140,33 +146,17 @@ export function createWallet(address: Address): void {
   }
 }
 
-export function fetchTokenBalance(
-  tokenAddress: Address,
-  wallet: Address
-): BigInt {
-  let contract = ERC20.bind(tokenAddress);
+// export function fetchTokenBalance(
+//   tokenAddress: Address,
+//   wallet: Address
+// ): BigInt {
+//   let con = ERC20.bind(tokenAddress);
 
-  // try types string and bytes32 for name
-  let balanceValue = new BigInt(0);
-  let balanceResult = contract.try_balanceOf(wallet);
-  if (!balanceResult.reverted) {
-    balanceValue = balanceResult.value;
-  }
+//   // try types string and bytes32 for name
 
-  return balanceValue;
-}
+//   let balanceResult = con.balanceOf(wallet).toI32();
 
-export function addToken(walletAddress: Address, tokenAddress: string): void {
-  let token = TokenBalance.load(
-    `${walletAddress.toHexString()}-${tokenAddress}`
-  );
+//   // log.info("BALANCE", [balanceResult.value.toString()]);
 
-  token.balance = fetchTokenBalance(
-    walletAddress,
-    Address.fromString(tokenAddress)
-  );
-  token.token = tokenAddress;
-  token.wallet = walletAddress.toHexString();
-
-  token.save();
-}
+//   return new BigInt(balanceResult);
+// }

@@ -1,31 +1,80 @@
 import { PairCreated } from "../generated/templates/Token/Factory";
 import { Token as TokenTemplate } from "../generated/templates";
-import { Token } from "../generated/schema";
+import { Token, TokenBalance } from "../generated/schema";
 import {
   DataSourceContext,
   ethereum,
   dataSource,
   log,
+  Address,
+  BigInt,
 } from "@graphprotocol/graph-ts";
 import {
-  addToken,
   createWallet,
   fetchTokenDecimals,
   fetchTokenName,
   fetchTokenSymbol,
 } from "./helpers";
-import { Transfer } from "../generated/Block/ERC20";
+import { ERC20, Transfer } from "../generated/Block/ERC20";
+
+function handleUpdateReceiver(
+  walletAddress: Address,
+  tokenAddress: Address,
+  amount: BigInt
+): void {
+  let ID = walletAddress
+    .toHexString()
+    .concat("-")
+    .concat(tokenAddress.toHexString());
+
+  let token = TokenBalance.load(ID);
+
+  if (token === null) {
+    token = new TokenBalance(ID);
+    token.balance = new BigInt(0);
+  }
+
+  token.balance = token.balance.plus(amount);
+  token.token = tokenAddress.toHexString();
+  token.wallet = walletAddress.toHexString();
+
+  token.save();
+}
+
+function handleUpdateSender(
+  walletAddress: Address,
+  tokenAddress: Address,
+  amount: BigInt
+): void {
+  let ID = walletAddress
+    .toHexString()
+    .concat("-")
+    .concat(tokenAddress.toHexString());
+
+  let token = TokenBalance.load(ID);
+
+  if (token === null) {
+    token = new TokenBalance(ID);
+    token.balance = new BigInt(0);
+  }
+
+  token.balance = token.balance.minus(amount);
+  token.token = tokenAddress.toHexString();
+  token.wallet = walletAddress.toHexString();
+
+  token.save();
+}
 
 export function handleTransfer(event: Transfer): void {
-  let context = dataSource.context();
-  let contractAddress = context.getBytes("contractAddress");
-
-  log.info("RECEIVER", [event.params.to.toHexString()]);
-  log.info("CONTRACT_ADDRESS", [contractAddress.toHexString()]);
+  // let contract = ERC20.bind(event.address);
 
   createWallet(event.params.to);
+  createWallet(event.params.from);
 
-  addToken(event.params.to, contractAddress.toHexString());
+  log.info("AMOUNT" + event.params.value.toString(), []);
+  handleUpdateSender(event.params.from, event.address, event.params.value);
+  handleUpdateReceiver(event.params.to, event.address, event.params.value);
+  // addToken(event.params.to, Address.fromString(contractAddress.toHexString()));
 }
 
 export function handleNewPair(event: PairCreated): void {
