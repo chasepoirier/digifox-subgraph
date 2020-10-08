@@ -1,0 +1,55 @@
+specVersion: 0.0.2
+description: Gravatar for Ethereum
+repository: https://github.com/graphprotocol/example-subgraph
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum/address
+    name: Block
+    network: mainnet
+    source:
+      address: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+      abi: Factory
+      startBlock: 10000834
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Token
+      abis:
+        - name: Factory
+          file: Block/abis/factory.json
+        - name: ERC20
+          file: Block/abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: Block/abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: Block/abis/ERC20NameBytes.json
+      eventHandlers:
+        - event: PairCreated(indexed address,indexed address,address,uint256)
+          handler: handleNewPair
+      file: Block/Block.wasm
+templates:
+  - kind: ethereum/contract
+    name: Token
+    network: mainnet
+    source:
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: Block/Block.wasm
+      entities:
+        - Wallet
+        - TokenBalance
+        - Token
+      abis:
+        - name: ERC20
+          file: Token/abis/ERC20.json
+        - name: Factory
+          file: Token/abis/factory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
