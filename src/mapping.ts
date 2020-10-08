@@ -18,14 +18,14 @@ import { Transfer } from "../generated/Block/ERC20";
 
 export function handleTransfer(event: Transfer): void {
   let context = dataSource.context();
-  let contractAddress = context.getString("contractAddress");
+  let contractAddress = context.getBytes("contractAddress");
 
   log.info("RECEIVER", [event.params.to.toHexString()]);
-  log.info("CONTRACT_ADDRESS", [contractAddress]);
+  log.info("CONTRACT_ADDRESS", [contractAddress.toHexString()]);
 
   createWallet(event.params.to);
 
-  addToken(event.params.to, contractAddress);
+  addToken(event.params.to, contractAddress.toHexString());
 }
 
 export function handleNewPair(event: PairCreated): void {
@@ -67,7 +67,7 @@ export function handleNewPair(event: PairCreated): void {
     token1.decimals = decimals;
 
     let context = new DataSourceContext();
-    context.setString("contractAddress", event.params.token1.toHexString());
+    context.setBytes("contractAddress", event.params.token1);
     TokenTemplate.createWithContext(event.params.token1, context);
   }
 
