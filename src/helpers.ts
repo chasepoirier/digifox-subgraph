@@ -143,7 +143,7 @@ export function createWallet(address: Address): void {
 export function addToken(walletAddress: Address, tokenAddress: string): void {
   let wallet = Wallet.load(walletAddress.toHexString());
 
-  const idx = wallet.tokens.indexOf(tokenAddress);
+  let idx = wallet.tokens.indexOf(tokenAddress);
 
   if (idx === -1) {
     wallet.tokens.push(tokenAddress);

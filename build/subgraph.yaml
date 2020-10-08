@@ -1,10 +1,10 @@
 specVersion: 0.0.2
 description: Gravatar for Ethereum
-repository: https://github.com/graphprotocol/example-subgraph
+repository: https://github.com/chasepoirier/digifox-subgraph
 schema:
   file: schema.graphql
 dataSources:
-  - kind: ethereum/address
+  - kind: ethereum/contract
     name: Block
     network: mainnet
     source:

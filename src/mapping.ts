@@ -16,33 +16,19 @@ import {
 } from "./helpers";
 import { Transfer } from "../generated/Block/ERC20";
 
-// export function handleNewGravatar(event: NewGravatar): void {
-//   let gravatar = new Gravatar(event.params.id.toHex())
-//   gravatar.owner = event.params.owner
-//   gravatar.displayName = event.params.displayName
-//   gravatar.imageUrl = event.params.imageUrl
-//   gravatar.save()
-// }
-
-// export function handleUpdatedGravatar(event: UpdatedGravatar): void {
-//   let id = event.params.id.toHex()
-//   let gravatar = Gravatar.load(id)
-//   if (gravatar == null) {
-//     gravatar = new Gravatar(id)
-//   }
-//   gravatar.owner = event.params.owner
-//   gravatar.displayName = event.params.displayName
-//   gravatar.imageUrl = event.params.imageUrl
-//   gravatar.save()
-// }
-
 export function handleTransfer(event: Transfer): void {
+  // log.info("CONTRACT_ADDRESS", [contractAddress]);
+
   let context = dataSource.context();
   let contractAddress = context.getString("contractAddress");
+
+  // log.info("RECEIVER", [event.params.to.toHexString()]);
 
   createWallet(event.params.to);
 
   addToken(event.params.to, contractAddress);
+  // log.info("RECEIVER", [event.params.to.toHexString()]);
+  // log.info("CONTRACT_ADDRESS", [contractAddress.toHexString()]);
 }
 
 export function handleNewPair(event: PairCreated): void {
@@ -84,7 +70,7 @@ export function handleNewPair(event: PairCreated): void {
     token1.decimals = decimals;
 
     let context = new DataSourceContext();
-    context.setBytes("contractAddress", event.params.token1);
+    context.setString("contractAddress", event.params.token1.toHexString());
     TokenTemplate.createWithContext(event.params.token1, context);
   }
 
