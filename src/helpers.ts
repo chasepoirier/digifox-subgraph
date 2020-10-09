@@ -5,6 +5,9 @@ import {
   Address,
   Bytes,
   log,
+  ethereum,
+  json,
+  ipfs,
 } from "@graphprotocol/graph-ts";
 import { ERC20 } from "../generated/Block/ERC20";
 import { ERC20SymbolBytes } from "../generated/Block/ERC20SymbolBytes";
@@ -146,17 +149,26 @@ export function createWallet(address: Address): void {
   }
 }
 
+export function getEthBalance(address: Address): BigInt {
+  let balance = new BigInt(0)
+
+
+  return balance;
+}
+
 // export function fetchTokenBalance(
 //   tokenAddress: Address,
 //   wallet: Address
 // ): BigInt {
-//   let con = ERC20.bind(tokenAddress);
+//   let contract = ERC20.bind(tokenAddress)
 
-//   // try types string and bytes32 for name
+//   let balanceResult = contract.try_balanceOf(wallet)
 
-//   let balanceResult = con.balanceOf(wallet).toI32();
+//   let balance = new BigInt(0);
 
-//   // log.info("BALANCE", [balanceResult.value.toString()]);
+//   if(!balanceResult.reverted) {
+//     balance = balanceResult.value
+//   }
 
-//   return new BigInt(balanceResult);
+//   return balance;
 // }

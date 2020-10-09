@@ -67,7 +67,7 @@ function handleUpdateSender(
 
 export function handleTransfer(event: Transfer): void {
   // let contract = ERC20.bind(event.address);
-
+  
   createWallet(event.params.to);
   createWallet(event.params.from);
 
@@ -115,9 +115,7 @@ export function handleNewPair(event: PairCreated): void {
 
     token1.decimals = decimals;
 
-    let context = new DataSourceContext();
-    context.setBytes("contractAddress", event.params.token1);
-    TokenTemplate.createWithContext(event.params.token1, context);
+    TokenTemplate.create(event.params.token1);
   }
 
   // save updated values
